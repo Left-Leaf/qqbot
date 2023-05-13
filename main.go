@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"path"
+	"qqbot/mylog"
 	"qqbot/process"
 	"runtime"
 	"strings"
@@ -21,6 +22,15 @@ import (
 func main() {
 
 	ctx := context.Background()
+
+	// 初始化新的文件 logger，并使用相对路径来作为日志存放位置，设置最小日志界别为 DebugLevel
+	logger, err := mylog.New("./logs/", mylog.DebugLevel)
+	if err != nil {
+		log.Fatalln("error log new", err)
+	}
+
+	botgo.SetLogger(logger)
+
 	// 加载 appid 和 token
 	botToken := token.New(token.TypeBot)
 	if err := botToken.LoadFromConfig(getConfigPath("config.yaml")); err != nil {
@@ -28,7 +38,7 @@ func main() {
 	}
 
 	// 初始化 openapi，正式环境
-	//api := botgo.NewOpenAPI(botToken).WithTimeout(3 * time.Second)
+	// api := botgo.NewOpenAPI(botToken).WithTimeout(3 * time.Second)
 	// 沙箱环境
 	api := botgo.NewSandboxOpenAPI(botToken).WithTimeout(3 * time.Second)
 

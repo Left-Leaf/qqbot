@@ -9,7 +9,7 @@ import (
 )
 
 func sendReply(ctx context.Context, channelID string, toCreate *dto.MessageToCreate) {
-	if _, err := processor.api.PostMessage(ctx, channelID, toCreate); err != nil {
+	if _, err := processor.Api.PostMessage(ctx, channelID, toCreate); err != nil {
 		log.Println(err)
 	}
 }

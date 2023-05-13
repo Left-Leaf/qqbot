@@ -9,13 +9,13 @@ import (
 )
 
 type Process struct {
-	api openapi.OpenAPI
+	Api openapi.OpenAPI
 }
 
 var processor Process
 
 func InitProcessor(api openapi.OpenAPI) {
-	processor = Process{api: api}
+	processor = Process{Api: api}
 }
 
 func GetProcessor() Process {
