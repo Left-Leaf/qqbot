@@ -33,7 +33,7 @@ func main() {
 
 	// 加载 appid 和 token
 	botToken := token.New(token.TypeBot)
-	if err := botToken.LoadFromConfig(getConfigPath("config.yaml")); err != nil {
+	if err := botToken.LoadFromConfig(getConfigPath("config/config.yaml")); err != nil {
 		log.Fatalln(err)
 	}
 
