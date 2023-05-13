@@ -56,6 +56,7 @@ func main() {
 	intent := websocket.RegisterHandlers(
 		// at 机器人事件
 		ATMessageEventHandler(),
+		CreateMessageHandler(),
 	)
 
 	// 指定需要启动的分片数为 2 的话可以手动修改 wsInfo
@@ -68,6 +69,13 @@ func ATMessageEventHandler() event.ATMessageEventHandler {
 	return func(event *dto.WSPayload, data *dto.WSATMessageData) error {
 		input := strings.ToLower(message.ETLInput(data.Content))
 		return process.ProcessMessage(input, data)
+	}
+}
+
+func CreateMessageHandler() event.MessageEventHandler {
+	return func(event *dto.WSPayload, data *dto.WSMessageData) error {
+		process.PrintEvent((*dto.Message)(data))
+		return nil
 	}
 }
 

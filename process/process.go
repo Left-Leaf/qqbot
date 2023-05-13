@@ -2,6 +2,8 @@ package process
 
 import (
 	"context"
+	"fmt"
+	"log"
 
 	"github.com/tencent-connect/botgo/dto"
 	"github.com/tencent-connect/botgo/dto/message"
@@ -34,5 +36,15 @@ func ProcessMessage(input string, data *dto.WSATMessageData) error {
 		pin_run()
 	}
 
+	return nil
+}
+
+func PrintEvent(data *dto.Message) error {
+	ctx := context.Background()
+	guild, err := processor.Api.Guild(ctx, data.GuildID)
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Printf("[message] %s [%s] %s(%s) -> %s\n", data.Timestamp, guild.Name, data.Author.Username, data.Author.ID, data.Content)
 	return nil
 }
