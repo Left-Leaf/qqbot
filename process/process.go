@@ -109,7 +109,7 @@ func MemberChange(eventType dto.EventType, data *dto.WSGuildMemberData) error {
 }
 
 func GuildChange(eventType dto.EventType, data *dto.WSGuildData) error {
-	date := time.Now().Format("2006-01-02T15:04:05+07:00")
+	date := time.Now().Format("2006-01-02T15:04:05+08:00")
 	output := fmt.Sprintf("[change] %s [%s] System -> ", date, data.Name)
 	if eventType == "GUILD_CREATE" {
 		fmt.Printf("%sbot加入频道\n", output)
@@ -117,6 +117,24 @@ func GuildChange(eventType dto.EventType, data *dto.WSGuildData) error {
 		fmt.Printf("%s频道信息变更\n", output)
 	} else if eventType == "GUILD_DELETE" {
 		fmt.Printf("%sbot离开频道\n", output)
+	}
+	return nil
+}
+
+func ChannelChange(eventType dto.EventType, data *dto.WSChannelData) error {
+	date := time.Now().Format("2006-01-02T15:04:05+08:00")
+	ctx := context.Background()
+	guild, err := processor.Api.Guild(ctx, data.GuildID)
+	if err != nil {
+		log.Println(err)
+	}
+	output := fmt.Sprintf("[change] %s [%s] System -> 子频道%s", date, guild.Name, data.Name)
+	if eventType == "CHANNEL_CREATE" {
+		fmt.Printf("%s被创建\n", output)
+	} else if eventType == "GUILD_UPDATE" {
+		fmt.Printf("%s信息变更\n", output)
+	} else if eventType == "GUILD_DELETE" {
+		fmt.Printf("%s被删除\n", output)
 	}
 	return nil
 }

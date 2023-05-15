@@ -107,17 +107,17 @@ func DirectMessageHandler() event.DirectMessageEventHandler {
 	}
 }
 
-// GuildEventHandler 处理频道事件(待办)
+// GuildEventHandler 处理频道事件
 func GuildEventHandler() event.GuildEventHandler {
 	return func(event *dto.WSPayload, data *dto.WSGuildData) error {
-		return nil
+		return process.GuildChange(event.Type, data)
 	}
 }
 
 // ChannelEventHandler 处理子频道事件(待办)
 func ChannelEventHandler() event.ChannelEventHandler {
 	return func(event *dto.WSPayload, data *dto.WSChannelData) error {
-		return nil
+		return process.ChannelChange(event.Type, data)
 	}
 }
 
