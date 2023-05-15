@@ -121,10 +121,10 @@ func ChannelEventHandler() event.ChannelEventHandler {
 	}
 }
 
-// MemberEventHandler 处理成员变更事件(待办)
+// MemberEventHandler 处理成员变更事件
 func MemberEventHandler() event.GuildMemberEventHandler {
 	return func(event *dto.WSPayload, data *dto.WSGuildMemberData) error {
-		return nil
+		return process.MemberChange(event.Type, data)
 	}
 }
 

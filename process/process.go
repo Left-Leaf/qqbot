@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"qqbot/process/command"
+	"time"
 
 	"github.com/tencent-connect/botgo/dto"
 	"github.com/tencent-connect/botgo/dto/message"
@@ -83,6 +84,39 @@ func PrintMessage(data *dto.Message) error {
 			log.Println(err)
 		}
 		fmt.Printf("[message] %s [%s] %s(%s) -> %s\n", data.Timestamp, guild.Name, data.Author.Username, data.Author.ID, content)
+	}
+	return nil
+}
+
+func MemberChange(eventType dto.EventType, data *dto.WSGuildMemberData) error {
+	date := time.Now().Format("2006-01-02T15:04:05+08:00")
+	ctx := context.Background()
+	guild, err := processor.Api.Guild(ctx, data.GuildID)
+	if err != nil {
+		log.Println(err)
+	}
+	username := data.User.Username
+	userID := data.User.ID
+	output := fmt.Sprintf("[change] %s [%s] System -> %s(%s)", date, guild.Name, username, userID)
+	if eventType == "GUILD_MEMBER_REMOVE" {
+		fmt.Printf("%s离开频道\n", output)
+	} else if eventType == "GUILD_MEMBER_ADD" {
+		fmt.Printf("%s加入频道\n", output)
+	} else if eventType == "GUILD_MEMBER_UPDATE" {
+		fmt.Printf("%s频道属性发生变化\n", output)
+	}
+	return nil
+}
+
+func GuildChange(eventType dto.EventType, data *dto.WSGuildData) error {
+	date := time.Now().Format("2006-01-02T15:04:05+07:00")
+	output := fmt.Sprintf("[change] %s [%s] System -> ", date, data.Name)
+	if eventType == "GUILD_CREATE" {
+		fmt.Printf("%sbot加入频道\n", output)
+	} else if eventType == "GUILD_UPDATE" {
+		fmt.Printf("%s频道信息变更\n", output)
+	} else if eventType == "GUILD_DELETE" {
+		fmt.Printf("%sbot离开频道\n", output)
 	}
 	return nil
 }
