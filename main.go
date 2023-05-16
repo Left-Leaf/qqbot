@@ -21,7 +21,7 @@ import (
 )
 
 func main() {
-
+	log.Println("启动程序")
 	ctx := context.Background()
 
 	// 初始化新的文件 logger，并使用相对路径来作为日志存放位置，设置最小日志界别为 DebugLevel
@@ -29,7 +29,7 @@ func main() {
 	if err != nil {
 		log.Fatalln("error log new", err)
 	}
-
+	log.Print("日志初始化成功")
 	botgo.SetLogger(logger)
 
 	// 加载 appid 和 token
@@ -39,9 +39,9 @@ func main() {
 	}
 
 	// 初始化 openapi，正式环境
-	api := botgo.NewOpenAPI(botToken).WithTimeout(3 * time.Second)
+	// api := botgo.NewOpenAPI(botToken).WithTimeout(3 * time.Second)
 	// 沙箱环境
-	// api := botgo.NewSandboxOpenAPI(botToken).WithTimeout(3 * time.Second)
+	api := botgo.NewSandboxOpenAPI(botToken).WithTimeout(3 * time.Second)
 
 	// 获取 websocket 信息
 	wsInfo, err := api.WS(ctx, nil, "")
@@ -51,9 +51,11 @@ func main() {
 
 	//初始化消息处理器
 	process.InitProcessor(api)
+	log.Println("消息处理器初始化成功")
 
 	//注册消息
 	process.RegisterCmd(example.NewHello())
+	log.Println("指令注册完成")
 
 	// websocket.RegisterResumeSignal(syscall.SIGUSR1)
 	// 根据不同的回调，生成 intents
@@ -76,6 +78,7 @@ func main() {
 		ThreadEventHandler(),
 	)
 
+	log.Println("bot启动")
 	// 指定需要启动的分片数为 2 的话可以手动修改 wsInfo
 	if err = botgo.NewSessionManager().Start(wsInfo, botToken, &intent); err != nil {
 		log.Fatalln(err)

@@ -33,7 +33,7 @@ func RegisterCmd(c command.Command) {
 	processor.CmdList = append(processor.CmdList, c)
 }
 
-// 获取消息处理器
+// 获取消息处理器，目前好像没用，以后可能会去掉
 func GetProcessor() Process {
 	return processor
 }

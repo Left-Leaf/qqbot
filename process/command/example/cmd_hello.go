@@ -8,6 +8,7 @@ import (
 	"github.com/tencent-connect/botgo/dto/message"
 )
 
+// 单指令无参
 type Hello struct {
 	id string
 }
@@ -27,8 +28,7 @@ func (c Hello) Handle(ctx context.Context, data *dto.WSATMessageData) error {
 			IgnoreGetMessageError: true,
 		},
 	}
-	process.SendReply(ctx, data.ChannelID, toCreate)
-	return nil
+	return process.SendReply(ctx, data.ChannelID, toCreate)
 }
 
 func (c Hello) GetID() string {
