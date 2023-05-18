@@ -14,8 +14,9 @@ import (
 )
 
 type Process struct {
-	Api     openapi.OpenAPI
-	CmdList []command.Command
+	Api openapi.OpenAPI
+	// CmdList []command.Command
+	CmdMap map[string]command.Command //使用map集合拥有更快的查找速度
 }
 
 // 定义一个消息处理器
@@ -24,13 +25,15 @@ var processor Process
 // 初始化消息处理器
 func InitProcessor(api openapi.OpenAPI) {
 	processor = Process{
-		Api: api,
+		Api:    api,
+		CmdMap: make(map[string]command.Command),
 	}
 }
 
 // 注册指令
 func RegisterCmd(c command.Command) {
-	processor.CmdList = append(processor.CmdList, c)
+	// processor.CmdList = append(processor.CmdList, c)
+	processor.CmdMap[c.GetID()] = c
 }
 
 // 获取消息处理器，目前好像没用，以后可能会去掉
@@ -43,13 +46,26 @@ func ProcessMessage(input string, data *dto.WSATMessageData) error {
 	ctx := context.Background()
 	//解析指令
 	cmd := message.ParseCommand(input)
-	//遍历指令列表
-	for _, c := range processor.CmdList {
-		if c.Is(cmd.Cmd) {
-			if err := c.Handle(ctx, data); err != nil {
-				log.Println(err)
-			}
+	// //遍历指令列表(已废弃)
+	// for _, c := range processor.CmdList {
+	// 	if c.Is(cmd.Cmd) {
+	// 		if err := c.Handle(ctx, data); err != nil {
+	// 			log.Println(err)
+	// 		}
+	// 	}
+	// }
+	c := processor.CmdMap[cmd.Cmd]
+	err := c.Handle(ctx, data)
+	if err != nil {
+		toCreate := &dto.MessageToCreate{
+			Content: err.Error(),
+			MessageReference: &dto.MessageReference{
+				// 引用这条消息
+				MessageID:             data.ID,
+				IgnoreGetMessageError: true,
+			},
 		}
+		SendReply(ctx, data.ChannelID, toCreate)
 	}
 	return nil
 }

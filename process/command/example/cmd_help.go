@@ -7,7 +7,7 @@ import (
 	"github.com/tencent-connect/botgo/dto"
 )
 
-// 单指令有参
+// 有参指令
 type Help struct {
 	id string
 }
@@ -22,11 +22,6 @@ func (c Help) Handle(ctx context.Context, data *dto.WSATMessageData) error {
 	log.Println("执行help命令")
 	return nil
 }
-
-func (c Help) Is(cmd string) bool {
-	return c.id == cmd
-}
-
 func (c Help) GetID() string {
 	return c.id
 }

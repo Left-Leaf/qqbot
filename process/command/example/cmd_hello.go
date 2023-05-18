@@ -8,7 +8,7 @@ import (
 	"github.com/tencent-connect/botgo/dto/message"
 )
 
-// 单指令无参
+// 无参指令
 type Hello struct {
 	id string
 }
@@ -33,8 +33,4 @@ func (c Hello) Handle(ctx context.Context, data *dto.WSATMessageData) error {
 
 func (c Hello) GetID() string {
 	return c.id
-}
-
-func (c Hello) Is(cmd string) bool {
-	return cmd == c.id
 }
