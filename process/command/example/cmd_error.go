@@ -11,6 +11,12 @@ type ErrorCMD struct {
 	id string
 }
 
+func NewErrorCMD() *ErrorCMD {
+	return &ErrorCMD{
+		id: "error",
+	}
+}
+
 func (c ErrorCMD) Handle(ctx context.Context, data *dto.WSATMessageData) error {
 	return errors.New("指令错误示例")
 }

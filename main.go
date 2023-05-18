@@ -55,6 +55,7 @@ func main() {
 
 	//注册消息
 	process.RegisterCmd(example.NewHello())
+	process.RegisterCmd(example.NewErrorCMD())
 	log.Println("指令注册完成")
 
 	// websocket.RegisterResumeSignal(syscall.SIGUSR1)
