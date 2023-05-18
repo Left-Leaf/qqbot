@@ -20,14 +20,7 @@ func NewHello() *Hello {
 }
 
 func (c Hello) Handle(ctx context.Context, data *dto.WSATMessageData) error {
-	toCreate := &dto.MessageToCreate{
-		Content: "默认回复" + message.Emoji(307),
-		MessageReference: &dto.MessageReference{
-			// 引用这条消息
-			MessageID:             data.ID,
-			IgnoreGetMessageError: true,
-		},
-	}
+	toCreate := process.BuildRMessage("默认回复"+message.Emoji(307), data.ID)
 	return process.SendReply(ctx, data.ChannelID, toCreate)
 }
 

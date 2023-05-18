@@ -21,3 +21,15 @@ func SendReply(ctx context.Context, channelID string, toCreate *dto.MessageToCre
 	}
 	return nil
 }
+
+func BuildRMessage(content string, dataID string) *dto.MessageToCreate {
+	toCreate := &dto.MessageToCreate{
+		Content: content,
+		MessageReference: &dto.MessageReference{
+			// 引用这条消息
+			MessageID:             dataID,
+			IgnoreGetMessageError: true,
+		},
+	}
+	return toCreate
+}

@@ -57,14 +57,7 @@ func ProcessMessage(input string, data *dto.WSATMessageData) error {
 	c := processor.CmdMap[cmd.Cmd]
 	err := c.Handle(ctx, data)
 	if err != nil {
-		toCreate := &dto.MessageToCreate{
-			Content: err.Error(),
-			MessageReference: &dto.MessageReference{
-				// 引用这条消息
-				MessageID:             data.ID,
-				IgnoreGetMessageError: true,
-			},
-		}
+		toCreate := BuildRMessage(err.Error(), data.ID)
 		SendReply(ctx, data.ChannelID, toCreate)
 	}
 	return nil
