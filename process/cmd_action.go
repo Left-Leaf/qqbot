@@ -22,6 +22,7 @@ func SendReply(ctx context.Context, channelID string, toCreate *dto.MessageToCre
 	return nil
 }
 
+// 构建引用消息
 func BuildRMessage(content string, dataID string) *dto.MessageToCreate {
 	toCreate := &dto.MessageToCreate{
 		Content: content,
