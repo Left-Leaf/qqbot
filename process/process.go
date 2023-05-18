@@ -14,8 +14,7 @@ import (
 )
 
 type Process struct {
-	Api openapi.OpenAPI
-	// CmdList []command.Command
+	Api    openapi.OpenAPI
 	CmdMap map[string]command.Command //使用map集合拥有更快的查找速度
 }
 
@@ -32,7 +31,6 @@ func InitProcessor(api openapi.OpenAPI) {
 
 // 注册指令
 func RegisterCmd(c command.Command) {
-	// processor.CmdList = append(processor.CmdList, c)
 	processor.CmdMap[c.GetID()] = c
 }
 
@@ -46,14 +44,6 @@ func ProcessMessage(input string, data *dto.WSATMessageData) error {
 	ctx := context.Background()
 	//解析指令
 	cmd := message.ParseCommand(input)
-	// //遍历指令列表(已废弃)
-	// for _, c := range processor.CmdList {
-	// 	if c.Is(cmd.Cmd) {
-	// 		if err := c.Handle(ctx, data); err != nil {
-	// 			log.Println(err)
-	// 		}
-	// 	}
-	// }
 	c := processor.CmdMap[cmd.Cmd]
 	err := c.Handle(ctx, data)
 	if err != nil {

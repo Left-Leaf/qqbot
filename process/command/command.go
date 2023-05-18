@@ -16,6 +16,5 @@ import (
 
 type Command interface {
 	Handle(ctx context.Context, data *dto.WSATMessageData) error //执行指令
-	//Is(cmd string) bool                                          //指令匹配(已废弃)，因为map集合拥有更快的查找速度
-	GetID() string //获取指令ID,将id设置为私有更加安全(可能没有意义)
+	GetID() string                                               //获取指令ID,将id设置为私有更加安全(可能没有意义)
 }
