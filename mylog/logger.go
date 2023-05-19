@@ -2,12 +2,12 @@ package mylog
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
 
+	"github.com/natefinch/lumberjack"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -27,15 +27,21 @@ const (
 
 // New creates a new FileLogger.
 func New(logPath string, minLogLevel logLevel) (FileLogger, error) {
-	file, err := os.Create(fmt.Sprintf("%s/botgo.log", logPath))
-	if err != nil {
-		return FileLogger{}, err
+	filePath := fmt.Sprintf("%s/botgo.log", logPath)
+
+	lumberJackLogger := &lumberjack.Logger{
+		Filename:   filePath, //日志文件名
+		MaxSize:    10,       //单个日志文件大小(MB)
+		MaxBackups: 5,        //旧日志保存的最大数量
+		MaxAge:     30,       //旧日志保存的最大天数
+		Compress:   false,    //对backup的日志是否进行压缩
 	}
+
 	return FileLogger{
 		logger: zap.New(
 			zapcore.NewCore(
 				zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig()),
-				zapcore.AddSync(file),
+				zapcore.AddSync(lumberJackLogger),
 				zapcore.Level(minLogLevel),
 			),
 		),

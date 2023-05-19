@@ -30,8 +30,8 @@ func InitProcessor(api openapi.OpenAPI) {
 }
 
 // 注册指令
-func RegisterCmd(c command.Command) {
-	processor.CmdMap[c.GetID()] = c
+func RegisterCmd(id string, c command.Command) {
+	processor.CmdMap[id] = c
 }
 
 // 获取消息处理器，目前好像没用，以后可能会去掉

@@ -25,7 +25,7 @@ func main() {
 	ctx := context.Background()
 
 	// 初始化新的文件 logger，并使用相对路径来作为日志存放位置，设置最小日志界别为 DebugLevel
-	logger, err := mylog.New("./logs/", mylog.DebugLevel)
+	logger, err := mylog.New("./logs", mylog.DebugLevel)
 	if err != nil {
 		log.Fatalln("error log new", err)
 	}
@@ -54,8 +54,9 @@ func main() {
 	log.Println("消息处理器初始化成功")
 
 	//注册消息
-	process.RegisterCmd(example.NewHello())
-	process.RegisterCmd(example.NewErrorCMD())
+	process.RegisterCmd("hi", example.Hello)
+	process.RegisterCmd("help", example.Help)
+	process.RegisterCmd("error", example.ErrorCMD)
 	log.Println("指令注册完成")
 
 	// websocket.RegisterResumeSignal(syscall.SIGUSR1)

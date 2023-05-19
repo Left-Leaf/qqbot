@@ -7,21 +7,12 @@ import (
 	"github.com/tencent-connect/botgo/dto"
 )
 
+var Help help
+
 // 有参指令
-type Help struct {
-	id string
-}
+type help struct{}
 
-func NewHelp() *Help {
-	return &Help{
-		id: "help",
-	}
-}
-
-func (c Help) Handle(ctx context.Context, data *dto.WSATMessageData) error {
+func (c help) Handle(ctx context.Context, data *dto.WSATMessageData) error {
 	log.Println("执行help命令")
 	return nil
-}
-func (c Help) GetID() string {
-	return c.id
 }
