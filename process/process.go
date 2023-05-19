@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"qqbot/process/command"
 	"time"
 
 	"github.com/tencent-connect/botgo/dto"
 	"github.com/tencent-connect/botgo/dto/message"
+	"github.com/tencent-connect/botgo/log"
 	"github.com/tencent-connect/botgo/openapi"
 )
 
@@ -49,6 +49,7 @@ func ProcessMessage(input string, data *dto.WSATMessageData) error {
 	if err != nil {
 		toCreate := BuildRMessage(err.Error(), data.ID)
 		SendReply(ctx, data.ChannelID, toCreate)
+		return nil
 	}
 	return nil
 }
@@ -80,7 +81,9 @@ func PrintMessage(data *dto.Message) error {
 	} else {
 		guild, err := processor.Api.Guild(ctx, data.GuildID)
 		if err != nil {
-			log.Println(err)
+			fmt.Println(err)
+			log.Error(err)
+			return err
 		}
 		fmt.Printf("[message] %s [%s] %s(%s) -> %s\n", data.Timestamp, guild.Name, data.Author.Username, data.Author.ID, content)
 	}
@@ -92,7 +95,9 @@ func MemberChange(eventType dto.EventType, data *dto.WSGuildMemberData) error {
 	ctx := context.Background()
 	guild, err := processor.Api.Guild(ctx, data.GuildID)
 	if err != nil {
-		log.Println(err)
+		fmt.Println(err)
+		log.Error(err)
+		return err
 	}
 	username := data.User.Username
 	userID := data.User.ID
@@ -125,7 +130,9 @@ func ChannelChange(eventType dto.EventType, data *dto.WSChannelData) error {
 	ctx := context.Background()
 	guild, err := processor.Api.Guild(ctx, data.GuildID)
 	if err != nil {
-		log.Println(err)
+		fmt.Println(err)
+		log.Error(err)
+		return err
 	}
 	output := fmt.Sprintf("[change] %s [%s] System -> 子频道%s", date, guild.Name, data.Name)
 	if eventType == "CHANNEL_CREATE" {
@@ -145,7 +152,8 @@ func ProcessInlineSearch(interaction *dto.WSInteractionData) error {
 	}
 	search := &dto.SearchInputResolved{}
 	if err := json.Unmarshal(interaction.Data.Resolved, search); err != nil {
-		log.Println(err)
+		fmt.Println(err)
+		log.Error(err)
 		return err
 	}
 	if search.Keyword != "test" {
@@ -170,7 +178,8 @@ func ProcessInlineSearch(interaction *dto.WSInteractionData) error {
 	}
 	body, _ := json.Marshal(searchRsp)
 	if err := processor.Api.PutInteraction(context.Background(), interaction.ID, string(body)); err != nil {
-		log.Println("api call putInteractionInlineSearch  error: ", err)
+		fmt.Println("api call putInteractionInlineSearch  error: ", err)
+		log.Error(err)
 		return err
 	}
 	return nil

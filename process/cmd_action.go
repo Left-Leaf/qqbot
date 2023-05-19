@@ -5,6 +5,7 @@ import (
 	"regexp"
 
 	"github.com/tencent-connect/botgo/dto"
+	"github.com/tencent-connect/botgo/log"
 )
 
 // 发送消息
@@ -16,6 +17,7 @@ func SendReply(ctx context.Context, channelID string, toCreate *dto.MessageToCre
 		case "202":
 			return nil
 		default:
+			log.Error(err)
 			return err
 		}
 	}
