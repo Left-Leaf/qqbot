@@ -9,12 +9,10 @@ import (
 	"qqbot/process"
 	"qqbot/process/command/example"
 	"runtime"
-	"strings"
 	"time"
 
 	"github.com/tencent-connect/botgo"
 	"github.com/tencent-connect/botgo/dto"
-	"github.com/tencent-connect/botgo/dto/message"
 	"github.com/tencent-connect/botgo/event"
 	"github.com/tencent-connect/botgo/token"
 	"github.com/tencent-connect/botgo/websocket"
@@ -91,8 +89,7 @@ func main() {
 // ATMessageEventHandler 实现处理 at 消息的回调
 func ATMessageEventHandler() event.ATMessageEventHandler {
 	return func(_ *dto.WSPayload, data *dto.WSATMessageData) error {
-		input := strings.ToLower(message.ETLInput(data.Content))
-		return process.ProcessMessage(input, data)
+		return process.ProcessMessage(data)
 	}
 }
 

@@ -41,10 +41,10 @@ func GetProcessor() process {
 }
 
 // 处理消息
-func ProcessMessage(input string, data *dto.WSATMessageData) error {
+func ProcessMessage(data *dto.WSATMessageData) error {
 	ctx := context.Background()
 	//解析指令
-	cmd := message.ParseCommand(input)
+	cmd := message.ParseCommand(data.Content)
 	c := processor.CmdMap[cmd.Cmd]
 	err := c.Handle(ctx, data)
 	if err != nil {
