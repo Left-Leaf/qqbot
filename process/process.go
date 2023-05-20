@@ -13,17 +13,18 @@ import (
 	"github.com/tencent-connect/botgo/openapi"
 )
 
-type Process struct {
+// 消息处理器
+type process struct {
 	Api    openapi.OpenAPI
 	CmdMap map[string]command.Command //使用map集合拥有更快的查找速度
 }
 
-// 定义一个消息处理器
-var processor Process
+// 定义一个消息处理器p
+var processor process
 
 // 初始化消息处理器
 func InitProcessor(api openapi.OpenAPI) {
-	processor = Process{
+	processor = process{
 		Api:    api,
 		CmdMap: make(map[string]command.Command),
 	}
@@ -35,7 +36,7 @@ func RegisterCmd(id string, c command.Command) {
 }
 
 // 获取消息处理器，目前好像没用，以后可能会去掉
-func GetProcessor() Process {
+func GetProcessor() process {
 	return processor
 }
 
@@ -47,7 +48,7 @@ func ProcessMessage(input string, data *dto.WSATMessageData) error {
 	c := processor.CmdMap[cmd.Cmd]
 	err := c.Handle(ctx, data)
 	if err != nil {
-		toCreate := BuildRMessage(err.Error(), data.ID)
+		toCreate := BuildMessage(err.Error(), "", data.ID)
 		SendReply(ctx, data.ChannelID, toCreate)
 		return nil
 	}
@@ -55,7 +56,7 @@ func ProcessMessage(input string, data *dto.WSATMessageData) error {
 }
 
 // 打印消息
-func PrintMessage(data *dto.Message) error {
+func MessageChange(data *dto.Message) error {
 	ctx := context.Background()
 	content := data.Content
 	if data.Mentions != nil {
@@ -90,6 +91,7 @@ func PrintMessage(data *dto.Message) error {
 	return nil
 }
 
+// 处理成员事件
 func MemberChange(eventType dto.EventType, data *dto.WSGuildMemberData) error {
 	date := time.Now().Format("2006-01-02T15:04:05+08:00")
 	ctx := context.Background()
@@ -112,6 +114,7 @@ func MemberChange(eventType dto.EventType, data *dto.WSGuildMemberData) error {
 	return nil
 }
 
+// 处理频道事件
 func GuildChange(eventType dto.EventType, data *dto.WSGuildData) error {
 	date := time.Now().Format("2006-01-02T15:04:05+08:00")
 	output := fmt.Sprintf("[change] %s [%s] System -> ", date, data.Name)
@@ -125,6 +128,7 @@ func GuildChange(eventType dto.EventType, data *dto.WSGuildData) error {
 	return nil
 }
 
+// 处理子频道事件
 func ChannelChange(eventType dto.EventType, data *dto.WSChannelData) error {
 	date := time.Now().Format("2006-01-02T15:04:05+08:00")
 	ctx := context.Background()
@@ -145,7 +149,7 @@ func ChannelChange(eventType dto.EventType, data *dto.WSChannelData) error {
 	return nil
 }
 
-// ProcessInlineSearch is a function to process inline search
+// 处理内联消息（不知道有什么用）
 func ProcessInlineSearch(interaction *dto.WSInteractionData) error {
 	if interaction.Data.Type != dto.InteractionDataTypeChatSearch {
 		return fmt.Errorf("interaction data type not chat search")

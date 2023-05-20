@@ -90,7 +90,7 @@ func main() {
 
 // ATMessageEventHandler 实现处理 at 消息的回调
 func ATMessageEventHandler() event.ATMessageEventHandler {
-	return func(event *dto.WSPayload, data *dto.WSATMessageData) error {
+	return func(_ *dto.WSPayload, data *dto.WSATMessageData) error {
 		input := strings.ToLower(message.ETLInput(data.Content))
 		return process.ProcessMessage(input, data)
 	}
@@ -98,16 +98,16 @@ func ATMessageEventHandler() event.ATMessageEventHandler {
 
 // CreateMessageHandler 处理消息事件
 func CreateMessageHandler() event.MessageEventHandler {
-	return func(event *dto.WSPayload, data *dto.WSMessageData) error {
-		process.PrintMessage((*dto.Message)(data))
+	return func(_ *dto.WSPayload, data *dto.WSMessageData) error {
+		process.MessageChange((*dto.Message)(data))
 		return nil
 	}
 }
 
 // DirectMessageHandler 处理私信事件
 func DirectMessageHandler() event.DirectMessageEventHandler {
-	return func(event *dto.WSPayload, data *dto.WSDirectMessageData) error {
-		process.PrintMessage((*dto.Message)(data))
+	return func(_ *dto.WSPayload, data *dto.WSDirectMessageData) error {
+		process.MessageChange((*dto.Message)(data))
 		return nil
 	}
 }
