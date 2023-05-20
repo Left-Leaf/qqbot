@@ -45,9 +45,10 @@ func ProcessMessage(data *dto.WSATMessageData) error {
 	ctx := context.Background()
 	//解析指令
 	cmd := message.ParseCommand(data.Content)
-	c := processor.CmdMap[cmd.Cmd]
-	err := c.Handle(ctx, data)
-	if err != nil {
+
+	if c, exist := processor.CmdMap[cmd.Cmd]; !exist {
+		return nil
+	} else if err := c.Handle(ctx, data); err != nil {
 		toCreate := BuildMessage(err.Error(), "", data.ID)
 		SendReply(ctx, data.ChannelID, toCreate)
 		return nil
