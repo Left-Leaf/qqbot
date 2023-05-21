@@ -1,0 +1,11 @@
+# 在这个配置文件中补充你的 appid，bot token和数据库信息，并修改文件名为 config.yaml
+appid: 
+token: 
+datasource:
+  driverName: 
+  host: 
+  port: 
+  database: 
+  username: 
+  password: 
+  charset: utf8
