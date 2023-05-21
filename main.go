@@ -4,13 +4,16 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"path"
+	"qqbot/database"
 	"qqbot/mylog"
 	"qqbot/process"
 	"qqbot/process/command/example"
 	"runtime"
 	"time"
 
+	"github.com/spf13/viper"
 	"github.com/tencent-connect/botgo"
 	"github.com/tencent-connect/botgo/dto"
 	"github.com/tencent-connect/botgo/event"
@@ -24,6 +27,11 @@ var MessageChan chan *dto.WSATMessageData
 func main() {
 	log.Println("启动程序")
 	ctx := context.Background()
+
+	InitConfig()
+	//初始化数据库
+	database.InitDB()
+	defer database.CloseDB()
 
 	// 初始化新的文件 logger，并使用相对路径来作为日志存放位置，设置最小日志界别为 DebugLevel
 	logger, err := mylog.New("./logs", mylog.DebugLevel)
@@ -162,4 +170,15 @@ func getConfigPath(name string) string {
 		return fmt.Sprintf("%s/%s", path.Dir(filename), name)
 	}
 	return ""
+}
+
+func InitConfig() {
+	workDir, _ := os.Getwd()
+	viper.SetConfigName("application")
+	viper.SetConfigType("yml")
+	viper.AddConfigPath(workDir + "/config")
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(err)
+	}
 }
