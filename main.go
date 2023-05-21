@@ -2,15 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
-	"path"
 	"qqbot/database"
 	"qqbot/mylog"
 	"qqbot/process"
 	"qqbot/process/command/example"
-	"runtime"
 	"time"
 
 	"github.com/spf13/viper"
@@ -160,15 +157,6 @@ func ThreadEventHandler() event.ThreadEventHandler {
 	return func(event *dto.WSPayload, data *dto.WSThreadData) error {
 		return nil
 	}
-}
-
-// 获取配置地址
-func getConfigPath(name string) string {
-	_, filename, _, ok := runtime.Caller(1)
-	if ok {
-		return fmt.Sprintf("%s/%s", path.Dir(filename), name)
-	}
-	return ""
 }
 
 // 初始化配置系统
