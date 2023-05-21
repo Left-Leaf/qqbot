@@ -19,7 +19,7 @@ type process struct {
 	CmdMap map[string]command.Command //使用map集合拥有更快的查找速度
 }
 
-// 定义一个消息处理器p
+// 定义一个消息处理器
 var processor process
 
 // 初始化消息处理器
@@ -41,19 +41,15 @@ func GetProcessor() process {
 }
 
 // 处理消息
-func ProcessMessage(data *dto.WSATMessageData) error {
+func ProcessMessage(data *dto.WSATMessageData) {
 	ctx := context.Background()
 	//解析指令
 	cmd := message.ParseCommand(data.Content)
-
 	if c, exist := processor.CmdMap[cmd.Cmd]; !exist {
-		return nil
 	} else if err := c.Handle(ctx, data); err != nil {
 		toCreate := BuildMessage(err.Error(), "", data.ID)
 		SendReply(ctx, data.ChannelID, toCreate)
-		return nil
 	}
-	return nil
 }
 
 // 打印消息

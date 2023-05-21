@@ -18,6 +18,9 @@ import (
 	"github.com/tencent-connect/botgo/websocket"
 )
 
+// 指令队列
+var MessageChan chan *dto.WSATMessageData
+
 func main() {
 	log.Println("启动程序")
 	ctx := context.Background()
@@ -50,6 +53,15 @@ func main() {
 	//初始化消息处理器
 	process.InitProcessor(api)
 	log.Println("消息处理器初始化成功")
+
+	//监听消息
+	MessageChan = make(chan *dto.WSATMessageData, 10)
+	go func() {
+		for {
+			message := <-MessageChan
+			go process.ProcessMessage(message)
+		}
+	}()
 
 	//注册消息
 	process.RegisterCmd("hi", example.Hello)
@@ -89,23 +101,22 @@ func main() {
 // ATMessageEventHandler 实现处理 at 消息的回调
 func ATMessageEventHandler() event.ATMessageEventHandler {
 	return func(_ *dto.WSPayload, data *dto.WSATMessageData) error {
-		return process.ProcessMessage(data)
+		MessageChan <- data
+		return nil
 	}
 }
 
 // CreateMessageHandler 处理消息事件
 func CreateMessageHandler() event.MessageEventHandler {
 	return func(_ *dto.WSPayload, data *dto.WSMessageData) error {
-		process.MessageChange((*dto.Message)(data))
-		return nil
+		return process.MessageChange((*dto.Message)(data))
 	}
 }
 
 // DirectMessageHandler 处理私信事件
 func DirectMessageHandler() event.DirectMessageEventHandler {
 	return func(_ *dto.WSPayload, data *dto.WSDirectMessageData) error {
-		process.MessageChange((*dto.Message)(data))
-		return nil
+		return process.MessageChange((*dto.Message)(data))
 	}
 }
 
