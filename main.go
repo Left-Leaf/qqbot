@@ -43,9 +43,8 @@ func main() {
 
 	// 加载 appid 和 token
 	botToken := token.New(token.TypeBot)
-	if err := botToken.LoadFromConfig(getConfigPath("config/config.yaml")); err != nil {
-		log.Fatalln(err)
-	}
+	botToken.AppID = viper.GetUint64("appid")
+	botToken.AccessToken = viper.GetString("token")
 
 	// 初始化 openapi，正式环境
 	// api := botgo.NewOpenAPI(botToken).WithTimeout(3 * time.Second)
@@ -172,10 +171,11 @@ func getConfigPath(name string) string {
 	return ""
 }
 
+// 初始化配置系统
 func InitConfig() {
 	workDir, _ := os.Getwd()
-	viper.SetConfigName("application")
-	viper.SetConfigType("yml")
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
 	viper.AddConfigPath(workDir + "/config")
 	err := viper.ReadInConfig()
 	if err != nil {
